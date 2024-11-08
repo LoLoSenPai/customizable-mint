@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import CanvasComponent from './CanvasComponent';  // Import direct du composant
+import CanvasComponent from './CanvasComponent';
+import NFTPopup from './NFTPopup';
 
 const categories = [
     'BGs',
@@ -17,6 +18,8 @@ const categories = [
 export default function TraitSelector() {
     const [selectedTraits, setSelectedTraits] = useState({});
     const [traits, setTraits] = useState({});
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [capturedImage, setCapturedImage] = useState(null);
 
     // Charger les noms des traits pour chaque catégorie
     useEffect(() => {
@@ -34,6 +37,20 @@ export default function TraitSelector() {
             ...prev,
             [category]: trait
         }));
+    };
+
+    const allTraitsSelected = categories.every((category) => selectedTraits[category]);
+
+    const handleShowPopup = () => {
+        setIsPopupOpen(true);
+    };
+
+    const handleClosePopup = () => {
+        setIsPopupOpen(false);
+    };
+
+    const handleCapture = (imageUrl) => {
+        setCapturedImage(imageUrl);
     };
 
     return (
@@ -58,12 +75,23 @@ export default function TraitSelector() {
                         </select>
                     </div>
                 ))}
+                {allTraitsSelected && (
+                    <button onClick={handleShowPopup} className="mt-4 p-2 bg-blue-500 text-white rounded">
+                        Show NFT
+                    </button>
+                )}
             </div>
 
             {/* Canvas de rendu (droite) */}
             <div className="w-3/4">
-                <CanvasComponent selectedTraits={selectedTraits} categories={categories} />
+                <CanvasComponent selectedTraits={selectedTraits} categories={categories} onCapture={handleCapture} />
             </div>
+            <NFTPopup
+                isOpen={isPopupOpen}
+                onClose={handleClosePopup}
+                selectedTraits={selectedTraits}
+                imageUrl={capturedImage}
+            />
         </div>
     );
 }

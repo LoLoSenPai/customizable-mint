@@ -7,6 +7,28 @@ export default function CanvasComponent({ selectedTraits, categories }) {
     const canvasRef = useRef(null);
     const pixiAppRef = useRef(null);
 
+    const assembleImage = () => {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        // Définir la taille de l’image finale
+        canvas.width = 500;  // ou la taille souhaitée
+        canvas.height = 500;
+
+        Object.entries(selectedTraits).forEach(([category, trait]) => {
+            const image = new Image();
+            image.src = `/layers/${category}/${trait}.png`;  // chemin vers chaque trait
+            image.onload = () => {
+                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                // Capture après chargement complet
+                if (onCapture) {
+                    const imageUrl = canvas.toDataURL("image/png");
+                    onCapture(imageUrl);
+                }
+            };
+        });
+    };
+
     useEffect(() => {
         // Vérifier si l'application Pixi existe déjà pour éviter les duplications
         if (!pixiAppRef.current) {

@@ -19,7 +19,7 @@ export default function NFTPopup({ isOpen, onClose, selectedTraits, imageUrl }) 
             <div className="bg-white p-4 rounded-md max-w-md w-full">
                 <button onClick={onClose} className="float-right text-xl font-bold">×</button>
                 <h2 className="text-lg font-bold mb-2">NFT Preview</h2>
-                {imageUrl && <img src={imageUrl} alt="NFT Preview" className="w-full rounded mb-4" />}
+                {imageUrl && <img src={imageUrl} alt="NFT Preview" className="w-[100px] rounded mb-4" />}
                 <h3 className="font-semibold">Metadata:</h3>
                 <pre className="bg-gray-100 p-2 rounded text-xs">{JSON.stringify(metadata, null, 2)}</pre>
             </div>

@@ -41,16 +41,31 @@ export default function TraitSelector() {
 
     const allTraitsSelected = categories.every((category) => selectedTraits[category]);
 
-    const handleShowPopup = () => {
-        setIsPopupOpen(true);
+    const handleGenerateImage = async () => {
+        try {
+            const response = await fetch('/api/generate-image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ selectedTraits }),
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
+                setCapturedImage(imageUrl);
+                setIsPopupOpen(true); // Ouvrir la popup après avoir généré l'image
+            } else {
+                console.error('Error generating image');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
     const handleClosePopup = () => {
         setIsPopupOpen(false);
-    };
-
-    const handleCapture = (imageUrl) => {
-        setCapturedImage(imageUrl);
     };
 
     return (
@@ -76,7 +91,7 @@ export default function TraitSelector() {
                     </div>
                 ))}
                 {allTraitsSelected && (
-                    <button onClick={handleShowPopup} className="mt-4 p-2 bg-blue-500 text-white rounded">
+                    <button onClick={handleGenerateImage} className="mt-4 p-2 bg-blue-500 text-white rounded">
                         Show NFT
                     </button>
                 )}
@@ -84,7 +99,7 @@ export default function TraitSelector() {
 
             {/* Canvas de rendu (droite) */}
             <div className="w-3/4">
-                <CanvasComponent selectedTraits={selectedTraits} categories={categories} onCapture={handleCapture} />
+                <CanvasComponent selectedTraits={selectedTraits} categories={categories} />
             </div>
             <NFTPopup
                 isOpen={isPopupOpen}
